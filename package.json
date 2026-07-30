@@ -1,0 +1,144 @@
+{
+  "name": "composer-zoom",
+  "displayName": "Composer Zoom",
+  "description": "Resize Cursor's chat composer instantly with a keyboard shortcut, with independent zoom levels for the IDE and Agents windows.",
+  "version": "0.1.1",
+  "publisher": "AbdelrahmanMSalim",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "cursor",
+    "composer",
+    "chat",
+    "zoom",
+    "ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AbdelrahmanMSalim/composer-zoom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AbdelrahmanMSalim/composer-zoom/issues"
+  },
+  "extensionKind": [
+    "ui"
+  ],
+  "extensionDependencies": [
+    "subframe7536.custom-ui-style"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "composerZoom.apply",
+        "title": "Apply Settings and Reload",
+        "category": "Composer Zoom"
+      },
+      {
+        "command": "composerZoom.remove",
+        "title": "Remove Injected Script",
+        "category": "Composer Zoom"
+      }
+    ],
+    "configuration": {
+      "title": "Composer Zoom",
+      "properties": {
+        "composerZoom.defaultZoom": {
+          "type": "number",
+          "default": 1.7,
+          "exclusiveMinimum": 0,
+          "scope": "application",
+          "markdownDescription": "Zoom level used before anything has been set, and the level the reset shortcut returns to."
+        },
+        "composerZoom.step": {
+          "type": "number",
+          "default": 0.1,
+          "exclusiveMinimum": 0,
+          "scope": "application",
+          "markdownDescription": "How much each keypress changes the zoom."
+        },
+        "composerZoom.minZoom": {
+          "type": "number",
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "scope": "application",
+          "markdownDescription": "Lower bound, so the composer can never shrink out of sight."
+        },
+        "composerZoom.maxZoom": {
+          "type": "number",
+          "default": 3,
+          "exclusiveMinimum": 0,
+          "scope": "application",
+          "markdownDescription": "Upper bound, so the composer can never overflow the window."
+        },
+        "composerZoom.separatePerWindow": {
+          "type": "boolean",
+          "default": true,
+          "scope": "application",
+          "markdownDescription": "Remember a separate zoom level for the IDE window and the Agents window. Turn this off to share one level across both."
+        },
+        "composerZoom.selector": {
+          "type": "string",
+          "default": ".composer-bar[data-composer-status]",
+          "scope": "application",
+          "markdownDescription": "CSS selector for the element to zoom. Only change this if a Cursor update renames the composer element."
+        },
+        "composerZoom.modifiers": {
+          "type": "array",
+          "default": [],
+          "scope": "application",
+          "items": {
+            "type": "string",
+            "enum": [
+              "meta",
+              "ctrl",
+              "alt",
+              "shift"
+            ]
+          },
+          "markdownDescription": "Modifier keys the shortcuts require. These are DOM names, so on macOS `meta` means Command (⌘) and `alt` means Option (⌥). Leave empty for the platform default: `meta`+`alt` (⌘⌥) on macOS, `ctrl`+`alt` (Ctrl+Alt) elsewhere. Shift is ignored unless you list it, so holding Shift to reach `+` still works."
+        },
+        "composerZoom.growKey": {
+          "type": "string",
+          "default": "Equal",
+          "scope": "application",
+          "markdownDescription": "[KeyboardEvent.code](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) of the key that grows the composer."
+        },
+        "composerZoom.shrinkKey": {
+          "type": "string",
+          "default": "Minus",
+          "scope": "application",
+          "markdownDescription": "[KeyboardEvent.code](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) of the key that shrinks the composer."
+        },
+        "composerZoom.resetKey": {
+          "type": "string",
+          "default": "Digit0",
+          "scope": "application",
+          "markdownDescription": "[KeyboardEvent.code](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) of the key that resets the composer to `#composerZoom.defaultZoom#`."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test:runtime": "node test/runtime.test.js",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.89.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.7.2"
+  }
+}
