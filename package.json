@@ -133,7 +133,8 @@
     "watch": "tsc -watch -p ./",
     "test:runtime": "node test/runtime.test.js",
     "package": "vsce package",
-    "vscode:prepublish": "npm run build"
+    "vscode:prepublish": "npm run build",
+    "vscode:uninstall": "node ./scripts/uninstall.js"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
