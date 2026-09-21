@@ -1,11 +1,13 @@
 # Composer Zoom
 
-Resize Cursor's chat composer with a keyboard shortcut. The change is instant — no settings file to edit, no window reload, no restart. The IDE window and the Agents window each remember their own zoom level.
+Resize Cursor's chat pane with a keyboard shortcut. Replies, code blocks and the composer all scale together, so the text you read gets bigger along with the text you type. The change is instant — no settings file to edit, no window reload, no restart. The IDE window and the Agents window each remember their own zoom level.
+
+![Growing, shrinking and resetting the chat pane with the keyboard](https://raw.githubusercontent.com/AbdElrahmanMSalim/composer-zoom/main/media/demo.gif)
 
 | Shortcut (macOS) | Shortcut (Windows / Linux) | Action |
 | --- | --- | --- |
-| <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>=</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>=</kbd> | Grow the composer |
-| <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>-</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>-</kbd> | Shrink the composer |
+| <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>=</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>=</kbd> | Grow the chat pane |
+| <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>-</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>-</kbd> | Shrink the chat pane |
 | <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>0</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>0</kbd> | Reset to the default zoom |
 
 On macOS that's Command and Option. Shift is ignored, so reaching for <kbd>+</kbd> with Shift held works the same as the unshifted key.

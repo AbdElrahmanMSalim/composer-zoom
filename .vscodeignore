@@ -9,3 +9,5 @@ tsconfig.json
 .vscodeignore
 PUBLISHING.md
 **/*.ts
+media/demo.gif
+media/demo.mp4
