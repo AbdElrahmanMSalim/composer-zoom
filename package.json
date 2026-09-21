@@ -2,7 +2,7 @@
   "name": "composer-zoom",
   "displayName": "Composer Zoom",
   "description": "Resize Cursor's chat pane instantly with a keyboard shortcut, replies and composer together, with independent zoom levels for the IDE and Agents windows.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "AbdelrahmanMSalim",
   "license": "MIT",
   "icon": "media/icon.png",

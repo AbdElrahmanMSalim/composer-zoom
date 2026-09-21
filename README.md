@@ -4,6 +4,10 @@ Resize Cursor's chat pane with a keyboard shortcut. Replies, code blocks and the
 
 ![Growing, shrinking and resetting the chat pane with the keyboard](https://raw.githubusercontent.com/AbdElrahmanMSalim/composer-zoom/main/media/demo.gif)
 
+Cursor 3's Agents window keeps its prompt input in a separate part of the page, so it is named separately in the default selector and scales along with the replies:
+
+![The Agents window replies and prompt input at several zoom levels](https://raw.githubusercontent.com/AbdElrahmanMSalim/composer-zoom/main/media/demo-agents.gif)
+
 | Shortcut (macOS) | Shortcut (Windows / Linux) | Action |
 | --- | --- | --- |
 | <kbd>⌘</kbd>+<kbd>⌥</kbd>+<kbd>=</kbd> | <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>=</kbd> | Grow the chat pane |

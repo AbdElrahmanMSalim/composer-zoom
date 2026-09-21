@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.2
 
 - The Agents window prompt input now zooms along with the replies. Cursor 3 renders that window from a separate bundle that mounts the input outside the conversation body, so the previous single-element selector reached the replies only. The default now also names `.agent-prompt-input-root`, which exists in that layout alone, so nothing is zoomed twice
 - A shortcut pressed where the selector matches nothing is now ignored instead of moving the stored zoom level. Cursor's Agents window renders a composer the default selector cannot reach on its new-chat screen, so presses there looked like no-ops and then landed all at once on the next conversation opened
