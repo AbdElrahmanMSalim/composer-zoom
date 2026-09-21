@@ -13,7 +13,7 @@ const path = require('node:path')
 const SOURCE = fs.readFileSync(path.join(__dirname, '..', 'runtime', 'composerZoom.js'), 'utf-8')
 
 const IDE_PARTS = '.part.editor, .part.activitybar, .part.sidebar, .part.panel'
-const DEFAULT_COMPOSER = '.composer-bar[data-composer-status]'
+const DEFAULT_COMPOSER = '.composer-bar[data-composer-status], .agent-prompt-input-root'
 
 // The generated file is the prelude and the runtime concatenated, so the seam
 // between them needs covering too: settings assigned straight onto the stub

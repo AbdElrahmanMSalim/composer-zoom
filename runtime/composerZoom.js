@@ -17,8 +17,15 @@
 ;(function () {
   'use strict'
 
+  // Two elements because Cursor's two layouts disagree about where the input
+  // lives. The classic workbench nests it inside the composer bar, so one rule
+  // covers replies and input together. Cursor 3's Agents window mounts the
+  // prompt input in its own subtree, outside the conversation body, so it needs
+  // naming separately. They are never nested in each other, so no surface ends
+  // up zoomed twice: `.agent-prompt-input-root` exists only in the Agents
+  // layout, and the classic input is not matched by it.
   const DEFAULTS = {
-    selector: '.composer-bar[data-composer-status]',
+    selector: '.composer-bar[data-composer-status], .agent-prompt-input-root',
     defaultZoom: 1.7,
     step: 0.1,
     minZoom: 1,

@@ -88,9 +88,9 @@
         },
         "composerZoom.selector": {
           "type": "string",
-          "default": ".composer-bar[data-composer-status]",
+          "default": ".composer-bar[data-composer-status], .agent-prompt-input-root",
           "scope": "application",
-          "markdownDescription": "CSS selector for the element to zoom. Only change this if a Cursor update renames the composer element."
+          "markdownDescription": "CSS selector for the elements to zoom. The first matches the chat pane, the second the Agents window prompt input, which Cursor mounts outside it. Only change this if a Cursor update renames either element."
         },
         "composerZoom.modifiers": {
           "type": "array",

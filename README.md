@@ -29,7 +29,7 @@ The one-time reload prompt comes from Custom UI Style applying the patch. After 
 | `composerZoom.minZoom` | `1` | Lower bound, so the composer can't shrink out of sight |
 | `composerZoom.maxZoom` | `3` | Upper bound, so the composer can't overflow the window |
 | `composerZoom.separatePerWindow` | `true` | Keep separate levels for the IDE and Agents windows; turn off to share one |
-| `composerZoom.selector` | `.composer-bar[data-composer-status]` | Element to zoom; change only if a Cursor update renames it |
+| `composerZoom.selector` | `.composer-bar[data-composer-status], .agent-prompt-input-root` | Elements to zoom; change only if a Cursor update renames one |
 | `composerZoom.modifiers` | `[]` | Required modifiers. Empty means the platform default |
 | `composerZoom.growKey` | `Equal` | [`KeyboardEvent.code`](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) that grows |
 | `composerZoom.shrinkKey` | `Minus` | `KeyboardEvent.code` that shrinks |
@@ -58,7 +58,9 @@ Shortcuts don't fire while focus is inside an iframe-based panel, such as the bu
 
 A Cursor update replaces the application files and removes the patch. Custom UI Style detects this and offers to re-apply; if the shortcuts are dead after an update, that prompt was likely dismissed. Run **Composer Zoom: Apply Settings and Reload** to restore it.
 
-Because Cursor's DOM is internal and unversioned, a future release could rename the composer element. The `composerZoom.selector` setting exists as an escape hatch so you don't have to wait for an extension update.
+Because Cursor's DOM is internal and unversioned, a future release could rename either element the default selector names. The `composerZoom.selector` setting exists as an escape hatch so you don't have to wait for an extension update.
+
+The default names two elements because Cursor's two layouts differ. The classic workbench nests the input inside the chat pane, so zooming the pane carries the input with it. Cursor 3's Agents window mounts its prompt input in a separate subtree, so it has to be named on its own. Nothing is zoomed twice, since `.agent-prompt-input-root` exists only in the Agents layout.
 
 ## Development
 
