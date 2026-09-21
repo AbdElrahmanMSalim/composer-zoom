@@ -181,9 +181,18 @@ const midBoot = createEnv({
   store: { 'composerZoom:ide': '2.5', 'composerZoom:agents': '1.2' },
 })
 midBoot.showParts()
+midBoot.showComposer()
 midBoot.press('Equal')
 check('used the ide value', midBoot.store['composerZoom:ide'], '2.6')
 check('left agents alone', midBoot.store['composerZoom:agents'], '1.2')
+
+group('a keypress with nothing to zoom is ignored')
+const nothingToZoom = createEnv({ hasComposer: false, store: { 'composerZoom:ide': '2' } })
+check('the chord is not claimed', nothingToZoom.press('Equal'), false)
+check('the stored level stays put', nothingToZoom.store['composerZoom:ide'], '2')
+nothingToZoom.showComposer()
+check('claimed once the composer exists', nothingToZoom.press('Equal'), true)
+check('and the level moves', nothingToZoom.store['composerZoom:ide'], '2.1')
 
 group('cross-window sync is scoped to the matching key')
 const syncing = createEnv({ hasParts: true, store: { 'composerZoom:ide': '2.5' } })

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- A shortcut pressed where the selector matches nothing is now ignored instead of moving the stored zoom level. Cursor's Agents window renders a composer the default selector cannot reach on its new-chat screen, so presses there looked like no-ops and then landed all at once on the next conversation opened
+
 ## 0.1.1
 
 - Fixed the generated script never running. Its settings block was not terminated with a semicolon, so the runtime's leading `(` continued the statement and called the settings object, throwing before any shortcut was registered

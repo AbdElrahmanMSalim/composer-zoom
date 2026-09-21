@@ -141,6 +141,12 @@
     const action = resolveZoomAction(event)
     if (!action) return
 
+    // A rule aimed at nothing still writes to storage, so presses on a surface
+    // the selector cannot reach would accumulate invisibly and then land all at
+    // once when a matching one appears. Cursor's Agents window does exactly
+    // that on its new-chat screen.
+    if (!document.querySelector(config.selector)) return
+
     // Claim the chord before the workbench's own keybinding service sees it.
     event.preventDefault()
     event.stopPropagation()
