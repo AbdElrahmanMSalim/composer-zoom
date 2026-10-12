@@ -17,15 +17,19 @@
 ;(function () {
   'use strict'
 
-  // Two elements because Cursor's two layouts disagree about where the input
-  // lives. The classic workbench nests it inside the composer bar, so one rule
-  // covers replies and input together. Cursor 3's Agents window mounts the
-  // prompt input in its own subtree, outside the conversation body, so it needs
-  // naming separately. They are never nested in each other, so no surface ends
-  // up zoomed twice: `.agent-prompt-input-root` exists only in the Agents
-  // layout, and the classic input is not matched by it.
+  // Three elements because Cursor's two layouts disagree about how the chat is
+  // assembled. The classic workbench wraps replies and input together in the
+  // composer bar, so one name covers both. Cursor 3's Agents window is built
+  // from a separate bundle that mounts the conversation and the prompt input as
+  // siblings, so each has to be named: the transcript root carries the replies,
+  // `.agent-prompt-input-root` the input.
+  //
+  // The classic layout contains a transcript root too, nested inside the
+  // composer bar, which is why `renderZoom` keeps nested matches out of the
+  // rule rather than letting the two zoom factors multiply.
   const DEFAULTS = {
-    selector: '.composer-bar[data-composer-status], .agent-prompt-input-root',
+    selector:
+      '.composer-bar[data-composer-status], .composer-react-transcript-root, .agent-prompt-input-root',
     defaultZoom: 1.7,
     step: 0.1,
     minZoom: 1,
@@ -109,8 +113,42 @@
     return style
   }
 
+  // Splits a selector list on its top-level commas only, so a comma inside
+  // `:is(...)` or an attribute value stays with the selector it belongs to.
+  const listSelectors = (selector) => {
+    const parts = []
+    let depth = 0
+    let current = ''
+
+    for (const character of selector) {
+      if (character === '(' || character === '[') depth += 1
+      else if (character === ')' || character === ']') depth -= 1
+      else if (character === ',' && depth === 0) {
+        parts.push(current)
+        current = ''
+        continue
+      }
+      current += character
+    }
+
+    parts.push(current)
+    return parts.map((part) => part.trim()).filter(Boolean)
+  }
+
+  // `zoom` compounds down the tree, so an element matched inside another match
+  // would be scaled twice: in the classic layout the transcript root sits
+  // inside the composer bar. Each selector therefore claims only the elements
+  // no selector in the list already covers, which keeps the list a flat set of
+  // names a user can extend without having to know what nests in what.
+  const buildRule = (zoom) => {
+    const selectors = listSelectors(config.selector)
+    const exclusions = selectors.map((part) => `:not(${part} *)`).join('')
+    const outermost = selectors.map((part) => part + exclusions).join(', ')
+    return `${outermost} { zoom: ${zoom}; }`
+  }
+
   const renderZoom = (zoom) => {
-    getStyleElement().textContent = `${config.selector} { zoom: ${zoom}; }`
+    getStyleElement().textContent = buildRule(zoom)
   }
 
   const applyStoredZoom = () => {

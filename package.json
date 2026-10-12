@@ -2,7 +2,7 @@
   "name": "composer-zoom",
   "displayName": "Composer Zoom",
   "description": "Resize Cursor's chat pane instantly with a keyboard shortcut, replies and composer together, with independent zoom levels for the IDE and Agents windows.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "AbdelrahmanMSalim",
   "license": "MIT",
   "icon": "media/icon.png",
@@ -88,9 +88,9 @@
         },
         "composerZoom.selector": {
           "type": "string",
-          "default": ".composer-bar[data-composer-status], .agent-prompt-input-root",
+          "default": ".composer-bar[data-composer-status], .composer-react-transcript-root, .agent-prompt-input-root",
           "scope": "application",
-          "markdownDescription": "CSS selector for the elements to zoom. The first matches the chat pane, the second the Agents window prompt input, which Cursor mounts outside it. Only change this if a Cursor update renames either element."
+          "markdownDescription": "CSS selector for the elements to zoom. The first matches the IDE chat pane; the second and third match the Agents window conversation and prompt input, which Cursor builds as siblings. An element nested inside another match is left alone, so adding your own selector cannot zoom a surface twice. Only change this if a Cursor update renames one of these elements."
         },
         "composerZoom.modifiers": {
           "type": "array",

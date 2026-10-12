@@ -4,7 +4,7 @@ Resize Cursor's chat pane with a keyboard shortcut. Replies, code blocks and the
 
 ![Growing, shrinking and resetting the chat pane with the keyboard](https://raw.githubusercontent.com/AbdElrahmanMSalim/composer-zoom/main/media/demo.gif)
 
-Cursor 3's Agents window keeps its prompt input in a separate part of the page, so it is named separately in the default selector and scales along with the replies:
+Cursor 3's Agents window is built from its own bundle, which keeps the conversation and the prompt input in separate parts of the page, so both are named in the default selector and scale together:
 
 ![The Agents window replies and prompt input at several zoom levels](https://raw.githubusercontent.com/AbdElrahmanMSalim/composer-zoom/main/media/demo-agents.gif)
 
@@ -33,7 +33,7 @@ The one-time reload prompt comes from Custom UI Style applying the patch. After 
 | `composerZoom.minZoom` | `1` | Lower bound, so the composer can't shrink out of sight |
 | `composerZoom.maxZoom` | `3` | Upper bound, so the composer can't overflow the window |
 | `composerZoom.separatePerWindow` | `true` | Keep separate levels for the IDE and Agents windows; turn off to share one |
-| `composerZoom.selector` | `.composer-bar[data-composer-status], .agent-prompt-input-root` | Elements to zoom; change only if a Cursor update renames one |
+| `composerZoom.selector` | `.composer-bar[data-composer-status], .composer-react-transcript-root, .agent-prompt-input-root` | Elements to zoom; change only if a Cursor update renames one |
 | `composerZoom.modifiers` | `[]` | Required modifiers. Empty means the platform default |
 | `composerZoom.growKey` | `Equal` | [`KeyboardEvent.code`](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) that grows |
 | `composerZoom.shrinkKey` | `Minus` | `KeyboardEvent.code` that shrinks |
@@ -62,9 +62,11 @@ Shortcuts don't fire while focus is inside an iframe-based panel, such as the bu
 
 A Cursor update replaces the application files and removes the patch. Custom UI Style detects this and offers to re-apply; if the shortcuts are dead after an update, that prompt was likely dismissed. Run **Composer Zoom: Apply Settings and Reload** to restore it.
 
-Because Cursor's DOM is internal and unversioned, a future release could rename either element the default selector names. The `composerZoom.selector` setting exists as an escape hatch so you don't have to wait for an extension update.
+Because Cursor's DOM is internal and unversioned, a future release could rename any of the elements the default selector names. The `composerZoom.selector` setting exists as an escape hatch so you don't have to wait for an extension update.
 
-The default names two elements because Cursor's two layouts differ. The classic workbench nests the input inside the chat pane, so zooming the pane carries the input with it. Cursor 3's Agents window mounts its prompt input in a separate subtree, so it has to be named on its own. Nothing is zoomed twice, since `.agent-prompt-input-root` exists only in the Agents layout.
+The default names three elements because Cursor's two layouts differ. The classic workbench wraps the replies and the input together in the chat pane, so one name covers both. The Agents window is a separate bundle that mounts the conversation and the prompt input as siblings, so each is named: `.composer-react-transcript-root` for the replies and `.agent-prompt-input-root` for the input. Nothing is zoomed twice: `zoom` compounds down the tree, so any element that sits inside another match — the conversation root inside the IDE chat pane, for instance — is excluded from the rule. That holds for selectors you add yourself too.
+
+Right after Cursor updates itself, it may warn that your installation "appears to be corrupt". Cursor reads the checksums of its own files once at launch, and Custom UI Style re-patches those files during the session that follows an update, so for the rest of that session the two disagree. Quitting Cursor and starting it again clears the warning; the files on disk and the checksums beside them already match by then. Nothing is broken, and the warning is not specific to this extension — any extension that patches the workbench produces it.
 
 ## Development
 

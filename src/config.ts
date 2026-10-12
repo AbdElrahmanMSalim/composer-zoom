@@ -22,7 +22,8 @@ const MAC_MODIFIERS: readonly Modifier[] = ['meta', 'alt']
 const NON_MAC_MODIFIERS: readonly Modifier[] = ['ctrl', 'alt']
 
 const DEFAULTS = {
-  selector: '.composer-bar[data-composer-status]',
+  selector:
+    '.composer-bar[data-composer-status], .composer-react-transcript-root, .agent-prompt-input-root',
   defaultZoom: 1.7,
   step: 0.1,
   minZoom: 1,

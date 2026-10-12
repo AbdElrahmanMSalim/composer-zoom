@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+- The Agents window now zooms the replies as well as the prompt input. That window is rendered from Cursor's `workbench.glass.main.js` bundle, which mounts the conversation and the input as siblings, so naming the input alone left every reply at its original size. The default selector now also names `.composer-react-transcript-root`, the conversation root
+- An element that sits inside another match is now left out of the generated rule instead of being scaled by both. The conversation root the Agents window needs named also exists inside the IDE chat pane, where the two zoom levels would otherwise multiply
+
 ## 0.1.2
 
 - The Agents window prompt input now zooms along with the replies. Cursor 3 renders that window from a separate bundle that mounts the input outside the conversation body, so the previous single-element selector reached the replies only. The default now also names `.agent-prompt-input-root`, which exists in that layout alone, so nothing is zoomed twice

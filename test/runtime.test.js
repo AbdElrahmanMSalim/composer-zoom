@@ -13,7 +13,8 @@ const path = require('node:path')
 const SOURCE = fs.readFileSync(path.join(__dirname, '..', 'runtime', 'composerZoom.js'), 'utf-8')
 
 const IDE_PARTS = '.part.editor, .part.activitybar, .part.sidebar, .part.panel'
-const DEFAULT_COMPOSER = '.composer-bar[data-composer-status], .agent-prompt-input-root'
+const DEFAULT_COMPOSER =
+  '.composer-bar[data-composer-status], .composer-react-transcript-root, .agent-prompt-input-root'
 
 // The generated file is the prelude and the runtime concatenated, so the seam
 // between them needs covering too: settings assigned straight onto the stub
@@ -119,9 +120,17 @@ const check = (label, actual, expected) => {
   console.log(`  ${isOk ? 'PASS' : 'FAIL'}  ${label}: ${JSON.stringify(actual)}${detail}`)
 }
 
+// The runtime rewrites the configured list so no selector can match inside
+// another, which is what the generated rule is compared against.
+const deNested = (selector) => {
+  const parts = selector.split(',').map((part) => part.trim())
+  const exclusions = parts.map((part) => `:not(${part} *)`).join('')
+  return parts.map((part) => part + exclusions).join(', ')
+}
+
 group('defaults')
 const defaults = createEnv()
-check('rule needs no .monaco-workbench ancestor', defaults.selector(), DEFAULT_COMPOSER)
+check('rule needs no .monaco-workbench ancestor', defaults.selector(), deNested(DEFAULT_COMPOSER))
 check('starts at the default zoom', defaults.zoom(), '1.7')
 defaults.press('Equal')
 check('grows by one step', defaults.zoom(), '1.8')
@@ -222,7 +231,7 @@ group('custom keys and selector')
 const custom = createEnv({
   config: { growKey: 'BracketRight', shrinkKey: 'BracketLeft', resetKey: 'Backslash', selector: '.my-composer' },
 })
-check('selector is honoured', custom.selector(), '.my-composer')
+check('selector is honoured', custom.selector(), '.my-composer:not(.my-composer *)')
 custom.press('BracketRight')
 check('custom grow key works', custom.zoom(), '1.8')
 custom.press('BracketLeft')
@@ -231,6 +240,23 @@ check('custom shrink key works', custom.zoom(), '1.6')
 custom.press('Backslash')
 check('custom reset key works', custom.zoom(), '1.7')
 check('the replaced default key is inert', custom.press('Equal'), false)
+
+group('one surface is never zoomed twice')
+// Regression: the Agents window conversation needs naming separately from its
+// prompt input, but the same transcript root sits inside the IDE chat pane. A
+// plain selector list would stack the two zoom factors there.
+const nested = createEnv({ config: { selector: '.pane, .transcript' } })
+check(
+  'each selector skips what the others contain',
+  nested.selector(),
+  '.pane:not(.pane *):not(.transcript *), .transcript:not(.pane *):not(.transcript *)',
+)
+const grouped = createEnv({ config: { selector: ':is(.a, .b), [data-x="y,z"]' } })
+check(
+  'commas inside brackets stay put',
+  grouped.selector(),
+  ':is(.a, .b):not(:is(.a, .b) *):not([data-x="y,z"] *), [data-x="y,z"]:not(:is(.a, .b) *):not([data-x="y,z"] *)',
+)
 
 group('custom step, range and default')
 const tuned = createEnv({ config: { step: 0.05, minZoom: 0.5, maxZoom: 1.2, defaultZoom: 1 } })
@@ -268,7 +294,11 @@ const generated = createEnv({
   viaPrelude: true,
   config: { selector: '.generated-composer', defaultZoom: 1.3, step: 0.2, minZoom: 1, maxZoom: 3 },
 })
-check('config from the prelude is applied', generated.selector(), '.generated-composer')
+check(
+  'config from the prelude is applied',
+  generated.selector(),
+  '.generated-composer:not(.generated-composer *)',
+)
 check('starts at the prelude default', generated.zoom(), '1.3')
 generated.press('Equal')
 check('the prelude step is used', generated.zoom(), '1.5')
