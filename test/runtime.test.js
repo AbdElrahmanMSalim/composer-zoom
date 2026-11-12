@@ -308,5 +308,61 @@ check('the prelude step is used', generated.zoom(), '1.5')
 const afterNeighbour = createEnv({ prefix: 'window.__neighbour = { unterminated: true }\n' })
 check('installs after an unterminated neighbour', afterNeighbour.zoom(), '1.7')
 
+// Custom UI Style raises its re-apply prompt on every write to
+// `external.imports`, so registering must leave the list alone once our entry
+// is there, wherever it sits, even when another extension registers too.
+const { withOwnImport } = require('../out/imports')
+
+group('external.imports registration')
+
+const OWN = 'file:///Users/me/storage/composer-zoom.js'
+const OTHER = 'file:///Users/me/other/smart-rtl.js'
+
+check('appends when absent', withOwnImport([OTHER], OWN), [OTHER, OWN])
+check('appends to an empty list', withOwnImport([], OWN), [OWN])
+check('keeps its position when present', withOwnImport([OWN, OTHER], OWN), [OWN, OTHER])
+check(
+  'replaces a stale path in place',
+  withOwnImport([OTHER, 'file:///old/place/composer-zoom.js', { url: 'https://x/y.css' }], OWN),
+  [OTHER, OWN, { url: 'https://x/y.css' }],
+)
+check(
+  'drops extra stale copies of its own entry',
+  withOwnImport(['file:///a/composer-zoom.js', OTHER, 'file:///b/composer-zoom.js'], OWN),
+  [OWN, OTHER],
+)
+check('leaves a look-alike name alone', withOwnImport(['file:///a/not-composer-zoom.js'], OWN), [
+  'file:///a/not-composer-zoom.js',
+  OWN,
+])
+
+// Simulate several Cursor starts with another extension that registers the
+// same way. Each activation only writes when its result differs from what it
+// read, which is what registerImport does.
+const otherIsOwn = (entry) => typeof entry === 'string' && entry.endsWith('/smart-rtl.js')
+const otherWithOwn = (current, own) => {
+  const index = current.findIndex(otherIsOwn)
+  if (index === -1) return [...current, own]
+  return current.flatMap((entry, i) => (i === index ? [own] : otherIsOwn(entry) ? [] : [entry]))
+}
+const simulateStarts = (starts, initial) => {
+  let setting = initial
+  let writes = 0
+  for (let start = 0; start < starts; start++) {
+    for (const register of [(list) => withOwnImport(list, OWN), (list) => otherWithOwn(list, OTHER)]) {
+      const next = register(setting)
+      if (JSON.stringify(next) !== JSON.stringify(setting)) {
+        setting = next
+        writes++
+      }
+    }
+  }
+  return { setting, writes }
+}
+check('settles from empty after one write each', simulateStarts(5, []).writes, 2)
+check('no writes once both are registered', simulateStarts(5, [OTHER, OWN]).writes, 0)
+check('no writes in the reverse order either', simulateStarts(5, [OWN, OTHER]).writes, 0)
+check('a stale path costs at most one write', simulateStarts(5, ['file:///old/composer-zoom.js', OTHER]).writes, 1)
+
 console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) failed.`)
 process.exit(failures === 0 ? 0 : 1)

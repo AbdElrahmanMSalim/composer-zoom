@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Composer Zoom now keeps its entry in Custom UI Style's `custom-ui-style.external.imports` wherever it already is, instead of moving it to the end on every start. Another extension that registers the same way would move its own entry back, so the two rewrote the setting on each launch and Custom UI Style kept asking to apply the change. The setting is now written only when our entry is missing or points at an old location, and a stale path is replaced in place
+
 ## 0.1.3
 
 - The Agents window now zooms the replies as well as the prompt input. That window is rendered from Cursor's `workbench.glass.main.js` bundle, which mounts the conversation and the input as siblings, so naming the input alone left every reply at its original size. The default selector now also names `.composer-react-transcript-root`, the conversation root

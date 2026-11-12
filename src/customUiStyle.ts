@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { GENERATED_FILE_NAME } from './runtime'
+import { withOwnImport, withoutOwnImport } from './imports'
 
 export const CUSTOM_UI_STYLE_ID = 'subframe7536.custom-ui-style'
 
@@ -13,12 +13,6 @@ export const isCustomUiStyleInstalled = (): boolean =>
 export const runCustomUiStyleReload = async (): Promise<void> => {
   await vscode.commands.executeCommand(RELOAD_COMMAND)
 }
-
-// Custom UI Style accepts plain strings and `{ url }` objects. Ours is always a
-// string, and recognising it by file name lets a stale entry from a previous
-// storage location be cleaned up without disturbing anyone else's imports.
-const isOwnImport = (entry: unknown): boolean =>
-  typeof entry === 'string' && entry.endsWith(`/${GENERATED_FILE_NAME}`)
 
 const readImports = (): unknown[] => {
   const configured = vscode.workspace.getConfiguration(SECTION).get<unknown[]>(IMPORTS_SETTING)
@@ -39,7 +33,7 @@ const isSameList = (left: unknown[], right: unknown[]): boolean =>
 // write makes Custom UI Style raise its own prompt to re-apply.
 export const registerImport = async (filePath: string): Promise<boolean> => {
   const current = readImports()
-  const next = [...current.filter((entry) => !isOwnImport(entry)), vscode.Uri.file(filePath).toString()]
+  const next = withOwnImport(current, vscode.Uri.file(filePath).toString())
 
   if (isSameList(current, next)) return false
 
@@ -49,7 +43,7 @@ export const registerImport = async (filePath: string): Promise<boolean> => {
 
 export const unregisterImport = async (): Promise<boolean> => {
   const current = readImports()
-  const next = current.filter((entry) => !isOwnImport(entry))
+  const next = withoutOwnImport(current)
 
   if (isSameList(current, next)) return false
 
